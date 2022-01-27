@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
-import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { boardState, todosState } from "./atoms";
 import Board from "./components/Board";
+import CategorySelector from "./components/CategorySelector";
 
 const Container = styled.div`
   height: 100vh;
@@ -17,29 +17,14 @@ const Container = styled.div`
   padding-bottom: 50px;
 `;
 
-const CategoryForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-`;
-
-// interface ICategoryForm {
-//   category: string;
-// }
-
-const Boards = styled.div<{ isDraggingOver: boolean }>`
+const Boards = styled.div`
   display: flex;
   min-width: 100vw;
   justify-content: flex-start;
   align-items: flex-start;
-  padding-left: 10px;
-  gap: 10px;
+  padding: 0 20px;
+  gap: 20px;
   position: relative;
-  background-color: ${(props) =>
-    props.isDraggingOver ? "whiteSmoke" : "transparent"};
 `;
 
 const Trash = styled.div<{ isDraggingOver: boolean }>`
@@ -48,7 +33,8 @@ const Trash = styled.div<{ isDraggingOver: boolean }>`
   display: flex;
   justify-content: center;
   svg {
-    color: ${(props) => (props.isDraggingOver ? "grey" : "rgba(0, 0, 0, 0.1)")};
+    color: ${(props) =>
+      props.isDraggingOver ? "white" : "rgba(0, 0, 0, 0.3)"};
   }
 `;
 
@@ -118,43 +104,14 @@ function App() {
     localStorage.setItem("boards", JSON.stringify(boards));
   }, [boards]);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-    setError,
-  } = useForm();
-
-  function onCategorySubmit(category: string) {
-    if (category in todoBoards) {
-      setError("category", { message: "Already exist" }, { shouldFocus: true });
-      return;
-    }
-    setTodoBoards((prevBoards) => ({ ...prevBoards, [category]: [] }));
-    setBoards((prevBoards) => [...prevBoards, category]);
-    setValue("category", "");
-  }
-
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Container>
-        <CategoryForm
-          onSubmit={handleSubmit(({ category }) => onCategorySubmit(category))}
-        >
-          <label htmlFor="category">New Category</label>
-          <input {...register("category", { required: true, minLength: 2 })} />
-          <span>{errors?.category?.message}</span>
-          <button>Create</button>
-        </CategoryForm>
+        <CategorySelector />
         <Droppable droppableId="boards" direction="horizontal" type="board">
           {(provided, info) => {
             return (
-              <Boards
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                isDraggingOver={info.isDraggingOver}
-              >
+              <Boards ref={provided.innerRef} {...provided.droppableProps}>
                 {boards.map((boardId, index) => (
                   <Board
                     boardId={boardId}

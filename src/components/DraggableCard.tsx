@@ -5,16 +5,18 @@ import styled from "styled-components";
 import { todosState } from "../atoms";
 
 const Card = styled.div<{ isDragging: boolean }>`
+  font-family: "DM Sans", sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 5px;
   margin-bottom: 5px;
   padding: 10px;
-  background-color: ${(props) =>
-    props.isDragging ? "#e4f2ff" : props.theme.cardColor};
   box-shadow: ${(props) =>
     props.isDragging ? "0px 2px 5px rgba(0, 0, 0, 0.05)" : "none"};
+  background-color: ${(props) =>
+    props.isDragging ? props.theme.green : props.theme.green};
+  color: white;
 `;
 
 const Svg = styled.svg`
@@ -22,7 +24,7 @@ const Svg = styled.svg`
   height: 15px;
   color: rgba(0, 0, 0, 0.1);
   :hover {
-    color: rgba(0, 0, 0, 0.5);
+    color: whitesmoke;
   }
 `;
 
